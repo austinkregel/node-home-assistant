@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html class=>
+<meta charset='UTF-8'>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="http://codepen.io/WhiteWolfWizard/pen/oXyvEZ"/>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css'>
+<style class="cp-pen-styles">html, body {
+        overflow: hidden;
+    }
+
+    body {
+        background: #e6e6e6;
+        font-size: 11pt;
+        line-height: normal;
+    }
+
+    #container {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 300px;
+        height: 425px;
+        -webkit-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+    }
+
+    #container .controls {
+        position: absolute;
+        clear: both;
+        bottom: 0;
+        width: 100%;
+        height: 50px;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-flow: row nowrap;
+        flex-flow: row nowrap;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        -ms-flex-line-pack: center;
+        align-content: center;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+    #container .controls li {
+        margin: 0 20px;
+    }
+
+    #container .controls li button {
+        cursor: pointer;
+        width: 50px;
+        height: 50px;
+        padding: 0;
+        margin: 0;
+        outline: 0;
+        border: 0;
+        border-radius: 99em;
+        background: rgba(255, 255, 255, 0.3);
+        box-shadow: inset 0 0 0 1px #fff;
+        -webkit-transition: all 150ms ease;
+        transition: all 150ms ease;
+        font-size: 16pt;
+        text-align: center;
+    }
+
+    #container .controls li button:hover, #container .controls li button:active {
+        background: rgba(255, 255, 255, 0.6);
+        box-shadow: inset 0 0 0 3px #fff;
+    }
+
+    #container .controls li.pass button {
+        color: #f5454b;
+    }
+
+    #container .controls li.like button {
+        color: #2382ff;
+    }
+
+    #container .items {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 50px;
+    }
+
+    #container .items .item {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: calc(100% - 50px);
+        height: calc(100% - 50px);
+        border-radius: 5px;
+        background-color: #fff;
+        background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/14104/712.GIF");
+        background-position: center;
+        background-repeat: no-repeat;
+        display: none;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+        -webkit-transform: translate(-50%, -50%) scale(1);
+        transform: translate(-50%, -50%) scale(1);
+        -webkit-transition: all 1000ms ease;
+        transition: all 1000ms ease;
+    }
+
+    #container .items .item.active {
+        z-index: 5;
+    }
+
+    #container .items .item.next {
+        top: calc(50% + 12px);
+        opacity: 0.6;
+        z-index: 2;
+        -webkit-transform: translate(-50%, -50%) scale(0.95);
+        transform: translate(-50%, -50%) scale(0.95);
+    }
+
+    #container .items .item.last {
+        top: calc(50% + 24px);
+        opacity: 0.3;
+        z-index: 1;
+        -webkit-transform: translate(-50%, -50%) scale(0.9);
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+
+    #container .items .item.remove, #container .items .item.save {
+        opacity: 0;
+        z-index: 999;
+        -webkit-transition-duration: 500ms;
+        transition-duration: 500ms;
+    }
+
+    #container .items .item.remove {
+        -webkit-transform: translate(-200%, -50%) rotate(-25deg) scale(0.6);
+        transform: translate(-200%, -50%) rotate(-25deg) scale(0.6);
+    }
+
+    #container .items .item.save {
+        -webkit-transform: translate(100%, -50%) rotate(25deg) scale(0.6);
+        transform: translate(100%, -50%) rotate(25deg) scale(0.6);
+    }
+
+    #container .items .item .photo {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: 5px;
+        border-radius: 3px;
+        background-position: center center;
+        background-size: cover;
+    }
+
+    #container .items .item .caption {
+        cursor: default;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: 5px;
+        background: rgba(255, 255, 255, 0.9);
+    }
+
+    #container .items .item .caption .info {
+        padding: 10px;
+    }
+
+    #container .items .item .caption .info .name {
+        font-weight: 700;
+        text-transform: capitalize;
+    }
+
+    #container .items .item .caption .info .age {
+        font-size: 75%;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+</style>
+</head>
+<body>
+<div id='container'>
+    <ul class='controls'>
+        <li class='pass'>
+            <button class='fa fa-times'></button>
+        </li>
+        <li class='like'>
+            <button class='fa fa-check'></button>
+        </li>
+    </ul>
+    <ul class='items'>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+        <li class='item'>
+            <div class='photo'></div>
+            <div class='caption'>
+                <div class='info'>
+                    <div class='name'></div>
+                    <div class='age'></div>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+<script src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+<script src='//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js'></script>
+<script src='http://codepen.io/WhiteWolfWizard/pen/51307327227e72044ecac64310404cb3.js'></script>
+<script>
+    $(document).ready(function () {
+        FontAwesome();
+        SourceSansPro('html, body');
+    });
+
+    var newUser = function () {
+        $.ajax({
+            url: 'http://api.randomuser.me/',
+            dataType: 'json',
+            success: function (data) {
+                if (!data['error']) {
+                    var user = data.results[0].user;
+                    $('.active .name').text(user.name.first + ' ' + user.name.last);
+                    $('.active .photo').css('backgroundImage', 'url(' + user.picture.large + ')');
+                    function getAge(dateString) {
+                        var today = new Date(),
+                            birth = new Date(dateString),
+                            age = today.getFullYear() - birth.getFullYear(),
+                            m = today.getMonth() - birth.getMonth();
+                        if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+                            age--;
+                        }
+                        return age;
+                    }
+
+                    var userDob = new Date(user.dob * 1000),
+                        year = userDob.getFullYear(),
+                        month = ('0' + (userDob.getMonth() + 1)).slice(-2),
+                        day = ('0' + (userDob.getMonth() + 1)).slice(-2),
+                        birthDate = year + '/' + month + '/' + day,
+                        yearsOld = getAge(birthDate);
+                    $('.active .age').text('Age: ' + yearsOld);
+                } else {
+                    // ERROR
+                }
+            }
+        });
+    };
+
+    $(function () {
+        newUser();
+        $('.item:lt(3)').show();
+        $('.item:eq(0)').addClass('active');
+        $('.item:eq(1)').addClass('next');
+        $('.item:eq(2)').addClass('last');
+        var control = function (e) {
+            $('.active').switchClass('active', e);
+            $('.next').switchClass('next', 'active');
+            $('.last').switchClass('last', 'next').next().show().addClass('last');
+            newUser();
+        };
+        $('.pass button').on('click', function () {
+            control('remove');
+        });
+        $('.like button').on('click', function () {
+            control('save');
+        });
+    });
+</script>
+</body>
+</html>

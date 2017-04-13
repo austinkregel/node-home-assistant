@@ -1,0 +1,164 @@
+let fs = require('fs');
+let natural = require('natural')
+let Log = require('../Utils/Log')
+const _ = require('lodash'),
+    Bus = require('../Utils/Bus'),
+    Tokenizer = new natural.WordTokenizer();
+const nlp = require('nlp_compromise')
+
+var NaturalSynaptic = require('natural-synaptic');
+
+let Summerizer = new require('./Brain/Summerizer')
+
+module.exports = class Brain {
+    constructor() {
+        this.memories = {};
+        this.commands = [];
+        this.neural = null;
+        this.stored_at = 'data/brain_dump.json';
+        this.natural = natural;
+        this.classifier = new NaturalSynaptic();
+        this.natural.LancasterStemmer.attach();
+        this.needsToBeRetrained = true;
+        if (!fs.existsSync(this.stored_at)) {
+            fs.mkdir('data');
+            fs.writeFile(this.stored_at, '')
+        } else {
+            this.rememberFromLongTerm(this.stored_at)
+        }
+    }
+
+    // Train and save the brain
+    associate(key, infoToRemember, callback) {
+        // Brain.associate('weather', ['how', 'is', 'the', 'weather']);
+        if (typeof infoToRemember !== 'object') {
+            infoToRemember = [infoToRemember]
+        }
+        // set the memories to an empty array
+        if (typeof this.memories[key] !== 'object')
+            this.memories[key] = [];
+
+        // memory length before adding info.
+        let b4 = this.memories[key].length;
+        // add info to memories.
+        this.memories[key].push(infoToRemember)
+        // Make all memories unqiue
+        this.memories[key] = _.uniq(this.memories[key])
+        // get after memories
+        let a4 = this.memories[key].length;
+        // if before memories is lessthan after memories add the document
+        // And train the classifier, then save the brain file.
+        if (b4 < a4) {
+            // Add the information to the classifier with the associations
+            infoToRemember.forEach((v, k)=>{
+                this.classifier.addDocument(v, key);
+            })
+            // Train the classifier on the given information
+            if(this.needsToBeRetrained) {
+                // We cannot train the classifier after every association... It just won't work.
+                this.classifier.train();
+                this.needsToBeRetrained = false;
+            } else {
+                this.classifier.retrain();
+            }
+            // Save it all to a file
+            this.throwInLongTerm()
+                .then(() => {
+                    Log.debug('Saved association to: ' + this.stored_at)
+                });
+            // Add an event listener for the resolved words
+            Bus.on('resolve:' + key, callback)
+        }
+        // return an array of the memories because why not?
+        return this.memories;
+    }
+
+    // Save the file asyncronously.
+    throwInLongTerm() {
+        // Add a
+        return new Promise((resolve, reject) => {
+            this.classifier.save(this.stored_at,(err) => {
+                if (err) { // Pass through the error to the catch of the promise
+                    reject(err); return;
+                } // resolve to preform an action afterword
+                resolve();
+            });
+        });
+    }
+
+    // Restore the dump from the file.
+    rememberFromLongTerm(path) {
+        // Read the file
+            // fs.readFileSync(this.stored_at, null, (err, file) => {
+        //     if (err) throw err
+        //
+        //     Log.debug('Remembering from long term')
+        //     // Parse the json file
+        //     let brain_dump = JSON.parse(file)
+        //     // Run the associations to retrain the brain
+        //     brain_dump['docs'].forEach((v, k) => {
+        //         this.associate(v['label'], v['text'])
+        //     })
+        //     Log.debug('Brain reclassified')
+        // });
+
+    }
+
+    use(command) {
+        this.commands.push(command)
+
+        this.associate(command.command, command.command,  (resolved) => {
+            var matched_results = resolved.sentence.original.match(command.toRegex())
+            if(matched_results) {
+                command.closure.apply(this, matched_results.splice(1))
+            }
+        });
+        // this.commands.push(command);
+    }
+
+    canYou(key) {
+        let tokens = Tokenizer.tokenize(key);
+        // see if it's a command by calling it.
+        // this.call(key)
+        // Be sure to catch the classifier if it throws an error.
+        try {
+            let classified = this.classifier.classify(key);
+            // If the classifier goes through gotta make sure that it emits the
+            // Proper event.
+            Bus.emit('resolve:' + classified, {
+                // The resolved command
+                intent: this.classifier.classify(key),
+                sentence: {
+                    // original command passed through
+                    original: key,
+                    // Tokenize whatever was passed through as the key
+                    tokenized: tokens
+                }
+            })
+            // Returned the classified words
+            return classified;
+        } catch (err) {
+            throw err;
+            Log.debug("Your classifier has not been trained.")
+        }
+    }
+
+    call(possibleCommand) {
+        let results = '';
+        let found = false;
+        this.commands.forEach((object) => {
+            if (found = object.command.toRegex().test(possibleCommand)) {
+                // this.associate(possibleCommand, object.command.command, () => {
+                //     object.command.closure.apply(this, possibleCommand.match(object.command.toRegex()).splice(1))
+                //     Log.debug(object.command.toRegex().toString())
+                // });
+
+            }
+        })
+        if (!found) {
+            setTimeout(() => {
+                Log.debug("I thought about it... and I don't think I can help: " + possibleCommand)
+            }, 1000)
+        }
+    }
+}

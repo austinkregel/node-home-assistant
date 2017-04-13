@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "@google-cloud/speech": "^0.6.0",
+    "axios": "^0.15.3",
+    "body-parser": "^1.16.1",
+    "crypto-js": "^3.1.9-1",
+    "ejs": "^2.5.6",
+    "express": "^4.14.1",
+    "ioredis": "^2.5.0",
+    "moment": "^2.17.1",
+    "mysam-extract": "^0.2.0",
+    "natural": "^0.4.0",
+    "natural-synaptic": "^1.0.1",
+    "node-env-file": "^0.1.8",
+    "node-geocoder": "^3.16.0",
+    "node-summary": "^1.1.0",
+    "peerjs": "^0.3.14",
+    "promise": "^7.1.1",
+    "say": "^0.11.0",
+    "sonus": "^0.1.6",
+    "summarize": "^1.5.0",
+    "textract": "^2.1.1",
+    "twilio": "3.0.0-rc.13"
+  }
+}
