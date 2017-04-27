@@ -1,4 +1,4 @@
-let Action = require('../../Utils/Action')
+let Action = require('../Utils/Action')
 
 module.exports = class Remember extends Action {
     constructor() {
@@ -13,14 +13,7 @@ module.exports = class Remember extends Action {
                 Log.debug('Okay, I\'ll remember that your name is ' + thingToRemember)
                 this.respond(
                     () => Mouth.say("Okay I'll remember that your name is " + thingToRemember),
-                    () => Mouth.say("Okay I'll remember that your name is " + thingToRemember)
-                        .then(res => {
-                            Log.debug(res)
-                        })
-                        .catch(res => {
-                            Log.debug('error', res)
-                        })
-                )
+                    () => Mouth.text("Okay I'll remember that your name is " + thingToRemember));
                 break;
             case 'remember:item':
                 Log.debug('Okay, I\'ll remember ' + thingToRemember)

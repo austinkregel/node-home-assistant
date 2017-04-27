@@ -6,7 +6,7 @@ const fs = require('fs'),
     mysam = require('mysam-extract'),
     assign = require('lodash').assign,
     NaturalSynaptic = require('natural-synaptic'),
-    Bus = require('../../Utils/Bus');
+    Bus = require('../Utils/Bus');
 
 module.exports = class Brain {
     constructor() {
@@ -158,8 +158,9 @@ module.exports = class Brain {
             return classified;
         } catch (err) {
             // Throw error because we couldn't classify the text
-            throw err;
-            Log.debug("Your classifier has not been trained.")
+            // throw err;
+
+            Log.debug(err, text)
         }
     }
 }

@@ -1,4 +1,4 @@
-let Action = require('../../Utils/Action')
+let Action = require('../Utils/Action')
 
 module.exports = class UnknownAction extends Action {
     constructor() {
