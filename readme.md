@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/austinkregel/node-home-assistant.png?label=ready&title=Ready)](https://waffle.io/austinkregel/node-home-assistant?utm_source=badge)
 # How to use.
 To use it
    1. clone it
