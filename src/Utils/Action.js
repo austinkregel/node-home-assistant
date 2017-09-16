@@ -17,6 +17,11 @@ module.exports = class Action {
 
 
     addTag(sentence, tags, subIntent) {
+        if(Array.isArray(sentence)){
+            sentence.forEach((value, key) => {
+                this.addTag(value, tags, subIntent);
+            })
+        }
         this.sentences.push(sentence)
         let extracted = MySam.extractor(sentence);
 
@@ -69,12 +74,10 @@ module.exports = class Action {
         }
     }
     respond(isSpeech, isText) {
-
-        if(!global.IS_MESSAGE_TEXT){
-            return isSpeech();
-        } else {
-            return isText()
+        if(global.IS_MESSAGE_TEXT){
+            return isText();
         }
+        return isSpeech()
     }
 
     resolve() {

@@ -6,7 +6,7 @@ const fs = require('fs'),
     mysam = require('mysam-extract'),
     assign = require('lodash').assign,
     NaturalSynaptic = require('natural-synaptic'),
-    Bus = require('../../Utils/Bus');
+    Bus = require('../Utils/Bus');
 
 module.exports = class Brain {
     constructor() {
@@ -150,7 +150,19 @@ module.exports = class Brain {
      */
     canYou(text) {
         try {
-            let classified = this.classifier.classify(text);
+            let matches = text.match(/(message me)|(text me)+/g);
+            if(matches !== undefined && matches !== null) {
+                global.IS_MESSAGE_TEXT = true;
+                Log.debug('Setting env IS_MESSAGE_TEXT to true')
+                text = text.replace(matches[0], '').trim()
+            } else {
+                global.IS_MESSAGE_TEXT = false;
+                Log.debug('Setting env IS_MESSAGE_TEXT to false')
+            }
+            Log.debug('env.IS_MESSAGE_TEXT ' + (global.IS_MESSAGE_TEXT ? 'true': 'false'), text.match(/(message me)|(text me)+/g))
+            Log.info(text);
+            let classified = this.classifier.classify(text)
+
             // If the classifier can classify, gotta make sure that it emits the given event
             Bus.emit('resolve:' + classified, text)
             // Returned the classified words
@@ -158,8 +170,9 @@ module.exports = class Brain {
             return classified;
         } catch (err) {
             // Throw error because we couldn't classify the text
-            throw err;
-            Log.debug("Your classifier has not been trained.")
+            // throw err;
+
+            Log.debug(err, text)
         }
     }
 }

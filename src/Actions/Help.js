@@ -1,5 +1,5 @@
-let Action = require('../../Utils/Action'),
-    Brain = require('../bootstrap').Brain
+let Action = require('../Utils/Action'),
+    Brain = require('../Core/bootstrap').Brain
 module.exports = class Help extends Action {
     constructor() {
         super()
@@ -9,21 +9,12 @@ module.exports = class Help extends Action {
     }
 
     resolve() {
-        if(global.IS_MESSAGE_TEXT) {
-            Mouth.say("I will text you the list of things you can say.")
-        }
         let textToSend = 'Here is what I can do\n';
         // for(let intent in Brain.plugins)
         // {
         //     if(Brain.plugins[intent].description && Brain.plugins[intent].description!=='')
         //         textToSend += '     ' + Brain.plugins[intent].description + "\n"
         // }
-        Mouth.text(textToSend)
-            .then(res => {
-                Log.debug('Message sent!')
-            })
-            .catch(err => {
-                Log.debug('I could not send the message, did you configure the settings properly?')
-            })
+        this.respond(() => Mouth.say(textToSend),() => Mouth.text(textToSend))
     }
 }
