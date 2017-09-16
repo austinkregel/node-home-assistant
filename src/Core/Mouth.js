@@ -6,7 +6,7 @@ module.exports = class Mouth {
     }
 
     say(words) {
-        say.speak(words)
+        say.speak(words, 'voice_cmu_us_gka_cg')
 
     }
 

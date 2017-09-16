@@ -2,7 +2,7 @@
 To use it
    1. clone it
    2. set the variables in the ENV file 
-   3. Run the bootstrap.js file in the root project directory... 
+   3. Run the Learn.js file in the root project directory... 
    4. Lastly, ask "Sonus, what's the weather like" or something like that.
 
 ## A simple Home assistant built in node.

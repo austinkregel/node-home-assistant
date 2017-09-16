@@ -11,21 +11,25 @@ module.exports = class Weather extends Action {
         super()
         this.description = 'Get your weather';
 
+        this.addTag('wwhats the weather', {generic: [0,2]}, 'weather')
+
         this.addTag('weather in Black River', {city: [2, 3]}, 'weather:city')
+        this.addTag('weather for Black River', {city: [2, 3]}, 'weather:city')
         this.addTag('weather near Black River', {city: [2, 3]}, 'weather:city')
         this.addTag('weather by Black River', {city: [2, 3]}, 'weather:city')
 
 
         this.addTag('weather in Black River New York', {city: [2, 3], state: [4, 5]}, 'weather:location')
+        this.addTag('weather for Black River New York', {city: [2, 3], state: [4, 5]}, 'weather:location')
         this.addTag('weather by Black River New York', {city: [2, 3], state: [4, 5]}, 'weather:location')
         this.addTag('weather near Black River New York', {city: [2, 3], state: [4, 5]}, 'weather:location')
 
     }
 
     resolve(city, state) {
-        // Mouth.say('Okay, I\'ll look for weather near ' + city + ', ' + state)
-        Log.info.apply(arguments, {city, state})
-        if (city && state) {
+        Log.info(arguments)
+        Log.debug({city, state})
+        if (city && state &&  !state.hasOwnProperty('extracted')) {
             geo.geocode(city + ', ' + state, (err, res) => {
                 if (err) throw err
                 Log.debug(res);
@@ -42,8 +46,6 @@ module.exports = class Weather extends Action {
                         Log.info(res)
                 })
             });
-        } else if (city) {
-            Log.debug(city)
         } else {
             geo.geocode(process.env.MY_ZIPCODE, (err, res) => {
                 if (err) throw err
